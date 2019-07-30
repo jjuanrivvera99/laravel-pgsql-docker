@@ -1,0 +1,35 @@
+version: '3.3'
+
+services:
+  web:
+    container_name: laravel
+    image: jjuanrivvera99/ubuntu-apache-php-postgresql
+    build:
+      context: ./build
+    ports:
+      - 80:80
+    volumes:
+      - ./core:/var/www
+
+  pgsql:
+    container_name: postgres
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: example
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "example@email.com"
+      PGADMIN_DEFAULT_PASSWORD: "PgAdmin2019!"
+    ports:
+      - 8080:80
+
+volumes:
+  pgdata:
