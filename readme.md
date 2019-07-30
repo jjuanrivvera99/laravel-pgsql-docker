@@ -17,6 +17,7 @@ Take the following steps:
 
 - clone this repository by executing the following command: 'git clone https://github.com/jjuanrivvera99/laravel-pgsql-docker'
 - change directory: 'cd laravel-pgsql-docker'
+- run command: 'docker-compose pull'
 - run command: 'docker-compose up -d'
 - run command: 'docker exec -it laravel bash'
 - run command: 'composer install'
