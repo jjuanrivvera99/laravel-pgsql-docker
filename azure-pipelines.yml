@@ -1,0 +1,45 @@
+steps:
+- task: AzureResourceGroupDeployment@0
+  displayName: 'Azure Deployment:Create Azure Container Registry'
+  inputs:
+    azureSubscription: 'laravel-pgsql - Azure'
+    resourceGroupName: 'laravel-pgsql-rg'
+    location: 'South Central US'
+    templateLocation: 'URL of the file'
+    csmFileLink: 'https://raw.githubusercontent.com/Microsoft/devops-project-samples/057f6cc268a62922d012067d069d58684e967d0a/armtemplates/webapp-containers/containerRegistry-template.json'
+    overrideParameters: '-registryName "laravelpgsqlacr" -registryLocation "South Central US" -registrySku "Standard"'
+
+- task: BuildImages@1
+  displayName: Build services
+  inputs:
+    action: Build services
+    azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+    azureContainerRegistry: $(azureContainerRegistry)
+    dockerComposeFile: docker-compose.yml
+    projectName: $(Build.Repository.Name)
+    qualifyImageNames: true
+    additionalImageTags: $(Build.BuildId)
+    
+- task: PushImages@2
+  displayName: Push services
+  inputs:
+    action: Push services
+    azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+    azureContainerRegistry: $(azureContainerRegistry)
+    dockerComposeFile: docker-compose.yml
+    projectName: $(Build.Repository.Name)
+    qualifyImageNames: true
+    additionalImageTags: $(Build.BuildId)
+    
+ - task: RunServices@3
+  displayName: Run services
+  inputs:
+    action: Run services
+    azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+    azureContainerRegistry: $(azureContainerRegistry)
+    dockerComposeFile: docker-compose.ci.build.yml
+    projectName: $(Build.Repository.Name)
+    qualifyImageNames: true
+    buildImages: true
+    abortOnContainerExit: true
+    detached: false
